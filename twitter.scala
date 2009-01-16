@@ -22,8 +22,8 @@ object Twitter{
 		input = input.trim()
 		var control:String = input.slice(0,2)
 		control match{
-			case ":u" => twitter.push(input.substring(2).trim())
-			case ":f" => display(twitter.get(url_friends))
+			case ":u" => twitter.update(input.substring(2).trim())
+			case ":f" => display(twitter.getTimeline("friends"))
 			case ":q" => return
 			case _ => println("Not a command")
 		}
