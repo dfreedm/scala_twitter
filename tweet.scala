@@ -3,28 +3,28 @@ package org.scala_twitter
  * Simple object that holds tweets
  */
 class Tweet {
-	var user_description:String = null
-	var user_url:String = null
-	var user_name:String = null
-	var profile_image_url:String = null
+	var user_description:String = ""
+	var user_url:String = ""
+	var user_name:String = ""
+	var profile_image_url:String = ""
 	var user_protected:Boolean = false
-	var screen_name:String = null
-	var location:String = null
+	var screen_name:String = ""
+	var location:String = ""
 	var user_id:Double = 0.0
 	var followers_count:Double = 0.0
-	var in_reply_to_screen_name:String = null
+	var in_reply_to_screen_name:String = ""
 	var in_reply_to_status_id:Double = 0.0
-	var in_reply_to_user_id:String = null
+	var in_reply_to_user_id:String = ""
 	var truncated:Boolean = false
 	var favorited:Boolean = false
-	var created_at:String = null
-	var text:String = null
-	var source:String = null
+	var created_at:String = ""
+	var text:String = ""
+	var source:String = ""
 	var msg_id:Double = 0.0
-	def parse(json:List[Tuple2[String,Any]]):Unit = {
+	def parse(json:List[(String,Any)]):Unit = {
 		json.foreach(tp => {
 			tp._1 match {
-				case "user" => {parseUser(tp._2.asInstanceOf[List[Tuple2[String,Any]]])}
+				case "user" => {parseUser(tp._2.asInstanceOf[List[(String,Any)]])}
 				case "in_reply_to_screen_name" => { in_reply_to_screen_name = tp._2.asInstanceOf[String] }
 				case "in_reply_to_status_id" => { in_reply_to_status_id = tp._2.asInstanceOf[Double] }
 				case "truncated" => { truncated = tp._2.asInstanceOf[Boolean] }
@@ -37,8 +37,9 @@ class Tweet {
 			}
 		})
 	}
-	def parseUser(user_list:List[Tuple2[String,Any]]):Unit = {
-		user_list.foreach(p => {
+	def parseUser(user_list:List[(String,Any)]):Unit = {
+		user_list.foreach(part => {
+			var p = part.asInstanceOf[(String,Any)]
 			p._1 match {
 				case "description" => { user_description = p._2.asInstanceOf[String] }
 				case "url" => { user_url = p._2.asInstanceOf[String] }
@@ -52,5 +53,12 @@ class Tweet {
 				case _ => {}
 			}
 		})
+	}
+}
+object Tweet{
+	def apply(x:List[(String,Any)]):Tweet = {
+		var i = new Tweet
+		i.parse(x)
+		return i
 	}
 }

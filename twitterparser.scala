@@ -33,22 +33,15 @@ class TwitterParser(username:String,password:String){
 		var content:InputStream = connection.getInputStream();
 		var reader:BufferedReader = new BufferedReader(new InputStreamReader(content));
 		var line:String = reader.readLine();
-		var json = JSON.parseFull(line);
-		var response:List[List[Tuple2[String,Any]]] = null
-		json match{
-			case Some(j)=>{
-				if (j.isInstanceOf[List[List[Tuple2[String,Any]]]]) response = j.asInstanceOf[List[List[Tuple2[String,Any]]]]
-				else if (j.isInstanceOf[List[Tuple2[String,Any]]]) response = List(j.asInstanceOf[List[Tuple2[String,Any]]])
-			}
+		var json = JSON.parse(line);
+		var response = json match{
+			case Some(j)=> j
 			case None => null
 		}
 		var tweets:ArrayList[Tweet] = new ArrayList[Tweet]
-		if (response != null){
-			response.foreach(tweet => {
-			var i = new Tweet
-			i.parse(tweet)
-			tweets.add(i)
-		 })
+		response.head match{
+			case t:(String,Any) => tweets.add(Tweet(response.asInstanceOf[List[(String,Any)]]))
+			case t:List[Any] => response.foreach(tweet => tweets.add(Tweet(tweet.asInstanceOf[List[(String,Any)]])))
 		}
 		return tweets.toArray[Tweet]
 	}
