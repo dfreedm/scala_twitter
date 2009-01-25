@@ -1,10 +1,10 @@
 package org.scala_twitter
 import java.net._
 import java.io._
-import scala.util.parsing.json._
+import scala.xml._
 import scala.collection.jcl.ArrayList
 /**
- * Connects to twitter JSON API
+ * Connects to twitter xml API
  */
 class TwitterParser(username:String,password:String){
 	private val http = "http://twitter.com/"
@@ -24,7 +24,7 @@ class TwitterParser(username:String,password:String){
 		}
 	}
 	/**
-	 * Pull line from twitter url JSON feed and parse it
+	 * Pull line from twitter url xml feed and parse it
 	 */
 	private def get(turl:String):Array[Tweet] = {
 		if (turl == null) return null;
@@ -32,17 +32,10 @@ class TwitterParser(username:String,password:String){
 		if (connection == null) return null;
 		var content:InputStream = connection.getInputStream();
 		var reader:BufferedReader = new BufferedReader(new InputStreamReader(content));
-		var line:String = reader.readLine();
-		var json = JSON.parse(line);
-		var response = json match{
-			case Some(j)=> j
-			case None => null
-		}
-		var tweets:ArrayList[Tweet] = new ArrayList[Tweet]
-		response.head match{
-			case t:(String,Any) => tweets.add(Tweet(response.asInstanceOf[List[(String,Any)]]))
-			case t:List[Any] => response.foreach(tweet => tweets.add(Tweet(tweet.asInstanceOf[List[(String,Any)]])))
-		}
+		val xml = XML.load(reader)
+		var tweets = new ArrayList[Tweet]
+		val tweetList = xml \ "status"
+		tweetList.foreach(tweet => tweets.add(Tweet(tweet)))
 		return tweets.toArray[Tweet]
 	}
 	/**
@@ -70,7 +63,7 @@ class TwitterParser(username:String,password:String){
 	def getTimeline(timeline:String):Array[Tweet] = {
 		var url:String = http+"statuses/"
 		if (timeline == "friends" || timeline == "public" || timeline == "user"){
-			url+=timeline+"_timeline.json"
+			url+=timeline+"_timeline.xml"
 		}
 		else {
 		 url = null
@@ -80,15 +73,15 @@ class TwitterParser(username:String,password:String){
 	/**
 	 * Send update to twitter
 	 */
-	def update(status:String):Unit = push("http://twitter.com/statuses/update.json",status)
+	def update(status:String):Unit = push("http://twitter.com/statuses/update.xml",status)
 	/**
 	 * Delete message by id
 	 */
-	def delete(id:Double):Unit = push("http://twitter.com/statuses/destroy/"+id+".json","")
+	def delete(id:Double):Unit = push("http://twitter.com/statuses/destroy/"+id+".xml","")
 	/**
 	 * Get a single message by id
 	 */
-	def getMsg(id:Double):Unit = get("http://twitter.com/statuses/show/"+id+".json")
+	def getMsg(id:Double):Unit = get("http://twitter.com/statuses/show/"+id+".xml")
 	/**
 	 * Shorten a url with is.gd
 	 */

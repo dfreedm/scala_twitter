@@ -1,62 +1,57 @@
 package org.scala_twitter
+import scala.xml._
 /**
  * Simple object that holds tweets
  */
-class Tweet {
-	var user_description:String = ""
-	var user_url:String = ""
-	var user_name:String = ""
-	var profile_image_url:String = ""
+class Tweet
+{
+	var user_description:String = null
+	var user_url:String = null
+	var user_name:String = null
+	var profile_image_url:String = null
 	var user_protected:Boolean = false
-	var screen_name:String = ""
-	var location:String = ""
-	var user_id:Double = 0.0
-	var followers_count:Double = 0.0
-	var in_reply_to_screen_name:String = ""
-	var in_reply_to_status_id:Double = 0.0
-	var in_reply_to_user_id:String = ""
+	var screen_name:String = null
+	var location:String = null
+	var user_id:Int = 0
+	var followers_count:Int = 0
+	var in_reply_to_screen_name:String = null
+	var in_reply_to_status_id:String = null
+	var in_reply_to_user_id:String = null
 	var truncated:Boolean = false
 	var favorited:Boolean = false
-	var created_at:String = ""
-	var text:String = ""
-	var source:String = ""
-	var msg_id:Double = 0.0
-	def parse(json:List[(String,Any)]):Unit = {
-		json.foreach(tp => {
-			tp._1 match {
-				case "user" => {parseUser(tp._2.asInstanceOf[List[(String,Any)]])}
-				case "in_reply_to_screen_name" => { in_reply_to_screen_name = tp._2.asInstanceOf[String] }
-				case "in_reply_to_status_id" => { in_reply_to_status_id = tp._2.asInstanceOf[Double] }
-				case "truncated" => { truncated = tp._2.asInstanceOf[Boolean] }
-				case "favorited" => { favorited = tp._2.asInstanceOf[Boolean] }
-				case "create_at" => { created_at = tp._2.asInstanceOf[String] }
-				case "text" => { text = tp._2.asInstanceOf[String] }
-				case "id" => { msg_id = tp._2.asInstanceOf[Double] }
-				case "source" => { source = tp._2.asInstanceOf[String] }
-				case _ => {}
-			}
-		})
-	}
-	def parseUser(user_list:List[(String,Any)]):Unit = {
-		user_list.foreach(part => {
-			var p = part.asInstanceOf[(String,Any)]
-			p._1 match {
-				case "description" => { user_description = p._2.asInstanceOf[String] }
-				case "url" => { user_url = p._2.asInstanceOf[String] }
-				case "name" => { user_name = p._2.asInstanceOf[String] }
-				case "profile_image_url" => { profile_image_url = p._2.asInstanceOf[String] }
-				case "protected" => { user_protected = p._2.asInstanceOf[Boolean] }
-				case "screen_name" => { screen_name = p._2.asInstanceOf[String] }
-				case "location" => { location = p._2.asInstanceOf[String] }
-				case "id" => { user_id = p._2.asInstanceOf[Double] }
-				case "followers_count" => { followers_count = p._2.asInstanceOf[Double] }
-				case _ => {}
-			}
-		})
+	var created_at:String = null
+	var text:String = null
+	var source:String = null
+	var msg_id:Int = 0
+	def parse(xml:Node):Unit =
+	{
+		created_at = (xml \ "created_at").text
+		msg_id = (xml \ "id").text.toInt
+		text = (xml \ "text").text
+		source = (xml \ "source").text
+		truncated = (xml \ "truncated").text.toBoolean
+		in_reply_to_status_id = (xml \ "in_reply_to_status_id").text
+		in_reply_to_user_id = (xml \ "in_reply_to_user_id").text
+		favorited = (xml \ "favorited").text.toBoolean
+		in_reply_to_screen_name = (xml \ "in_reply_to_screen_name").text
+		user_id = (xml \ "user" \ "id").text.toInt
+		user_name = (xml \ "user" \ "name").text
+		screen_name = (xml \ "user"\ "screen_name").text
+		location = (xml \ "user" \ "location").text
+		user_description = (xml \ "user" \ "description").text
+		profile_image_url = (xml \ "user" \ "profile_image_url").text
+		user_url = (xml \ "user" \ "url").text
+		user_protected = (xml \ "user" \ "protected").text.toBoolean
+		followers_count = (xml \ "user" \ "followers_count").text.toInt
 	}
 }
-object Tweet{
-	def apply(x:List[(String,Any)]):Tweet = {
+/**
+ * Companion object that allows for factory creation
+ */
+object Tweet
+{
+	def apply(x:Node):Tweet =
+	{
 		var i = new Tweet
 		i.parse(x)
 		return i
