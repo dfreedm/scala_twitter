@@ -59,7 +59,7 @@ class TwitterParser(username:String,password:String){
 		rd.close()
 	}
 	//Only necessary for Authenticator
-	class Auth(username:String, password:String) extends Authenticaton
+	class Auth(username:String, password:String) extends Authenticator
 	{
 		override def getPasswordAuthentication():PasswordAuthentication = {new PasswordAuthentication(username,password.toCharArray())}
 	}
