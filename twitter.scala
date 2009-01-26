@@ -33,6 +33,7 @@ object Twitter
 			case ":f" => display(twitter.getTimeline("friends"))
 			case ":p" => display(twitter.getTimeline("public"))
 			case ":d" => display(twitter.getDMs)
+			case ":r" => display(twitter.getReplies)
 			case ":q" => return
 			case _ => println("Not a command")
 		}

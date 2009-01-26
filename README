@@ -1,3 +1,18 @@
 ##Scala Twitter library
 A scala implementation of the twitter API
 This is a work in progress, so there may be large changes on a daily basis
+
+twitterparser.scala contains all the networking code
+tweet.scala is just a basic tweet holding object factory
+dm.scala is the same for direct messages
+twitter.scala is a really crude ui to interact with the library
+
+scala_twitter can be compiled with fsc *.scala, and run with scala Twitter username password
+
+UI options are:
+:f -> friends timeline
+:p -> public timeline
+:r -> @replies
+:d -> recieved direct messages
+:q -> quit
+:u -> update status
