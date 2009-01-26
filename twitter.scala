@@ -1,4 +1,5 @@
 import org.scala_twitter._
+import scala.util.matching.Regex
 object Twitter
 {
 	var twitter:TwitterParser = null
@@ -48,8 +49,7 @@ object Twitter
 			{
 				print(scala.Console.RED)
 			}
-			import java.net.URLDecoder
-			println(pad(tweet.screen_name) + ": " + URLDecoder.decode(tweet.text,"UTF-8") + scala.Console.RESET)
+			println(pad(tweet.screen_name) + ": " + tweet.text.replaceAll("<3","\u2665") + scala.Console.RESET)
 		})
 	}
 }
