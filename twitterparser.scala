@@ -38,8 +38,12 @@ class TwitterParser(username:String,password:String){
 		var reader:BufferedReader = new BufferedReader(new InputStreamReader(content));
 		val xml = XML.load(reader)
 		var tweets = new ArrayList[Tweet]
-		val tweetList = xml \ "status"
-		tweetList.foreach(tweet => tweets.add(Tweet(tweet)))
+		xml.label match
+		{
+			case "statuses" => (xml \ "status").foreach(tweet => tweets.add(Tweet(tweet)))
+			case "direct-messages" => (xml \ "direct_message").foreach(dm => tweets.add(DM(dm)))
+			case _ => println(xml)
+		}
 		return tweets.toArray[Tweet]
 	}
 	/**
@@ -61,7 +65,7 @@ class TwitterParser(username:String,password:String){
 	//Only necessary for Authenticator
 	class Auth(username:String, password:String) extends Authenticator
 	{
-		override def getPasswordAuthentication():PasswordAuthentication = {new PasswordAuthentication(username,password.toCharArray())}
+		override def getPasswordAuthentication():PasswordAuthentication = new PasswordAuthentication(username,password.toCharArray())
 	}
 	/**
 	 * Get a timeline
@@ -75,7 +79,7 @@ class TwitterParser(username:String,password:String){
 		}
 		else
 		{
-		 url = null
+			url = null
 		}
 		return get(url)
 	}
@@ -90,7 +94,18 @@ class TwitterParser(username:String,password:String){
 	/**
 	 * Get a single message by id
 	 */
-	def getMsg(id:Int):Unit = get("http://twitter.com/statuses/show/"+id+".xml")
+	def getMsg(id:Int):Array[Tweet] = get("http://twitter.com/statuses/show/"+id+".xml")
+	def getReplies():Array[Tweet] = get("http://twitter.com/statuses/replies.xml")
+	def getDMs():Array[Tweet] = get("http://twitter.com/direct_messages.xml")
+	def getSentDMs():Array[Tweet] = get("http://twitter.com/direct_messages/sent.xml")
+	def destroyDM(id:Int):Unit = push("http://twitter.com/direct_messages/destroy/"+id+".xml","")
+	def follow(user:String):Unit = push("http://twitter.com/friendships/create/"+user+".xml?follow=true","")
+	def leave(user:String):Unit = push("http://twitter.com/friendships/destroy/"+user+".xml","")
+	def block(user:String):Unit = push("http://twitter.com/blocks/create/"+user+".xml","")
+	def unBlock(user:String):Unit = push("http://twitter.com/blocks/destroy/"+user+".xml","")
+	def favorites():Array[Tweet] = get("http://twitter.com/favorites.xml")
+	def createFavorite(id:Int):Unit = push("http://twitter.com/favorites/create/"+id+".xml","")
+	def destroyFavorite(id:Int):Unit = push("http://twitter.com/favorites/destroy/"+id+".xml","")
 	/**
 	 * Shorten a url with is.gd
 	 */

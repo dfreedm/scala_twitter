@@ -30,6 +30,8 @@ object Twitter
 		{
 			case ":u" => twitter.update(input.substring(2).trim())
 			case ":f" => display(twitter.getTimeline("friends"))
+			case ":p" => display(twitter.getTimeline("public"))
+			case ":d" => display(twitter.getDMs)
 			case ":q" => return
 			case _ => println("Not a command")
 		}
@@ -39,14 +41,15 @@ object Twitter
 	def pad(x:String):String = x + (" " * (15-x.length))
 	def display(tw:Array[Tweet]) =
 	{
-		tw.foreach(tweet => 
+		tw.foreach(tweet =>
 		{
 			//Print @replies in red
 			if (tweet.in_reply_to_screen_name == username)
 			{
 				print(scala.Console.RED)
 			}
-			println(pad(tweet.screen_name) + ": " + tweet.text + scala.Console.RESET)
+			import java.net.URLDecoder
+			println(pad(tweet.screen_name) + ": " + URLDecoder.decode(tweet.text,"UTF-8") + scala.Console.RESET)
 		})
 	}
 }

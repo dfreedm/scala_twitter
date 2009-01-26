@@ -15,8 +15,8 @@ class Tweet
 	var user_id:Int = 0
 	var followers_count:Int = 0
 	var in_reply_to_screen_name:String = null
-	var in_reply_to_status_id:String = null
-	var in_reply_to_user_id:String = null
+	var in_reply_to_status_id:Int = 0
+	var in_reply_to_user_id:Int = 0
 	var truncated:Boolean = false
 	var favorited:Boolean = false
 	var created_at:String = null
@@ -30,8 +30,16 @@ class Tweet
 		text = (xml \ "text").text
 		source = (xml \ "source").text
 		truncated = (xml \ "truncated").text.toBoolean
-		in_reply_to_status_id = (xml \ "in_reply_to_status_id").text
-		in_reply_to_user_id = (xml \ "in_reply_to_user_id").text
+		in_reply_to_status_id = (xml \ "in_reply_to_status_id").text match
+		{
+			case "" => 0
+			case _ => (xml \ "in_reply_to_status_id").text.toInt
+		}
+		in_reply_to_user_id = (xml \ "in_reply_to_user_id").text match
+		{
+			case "" => 0
+			case _ => (xml \ "in_reply_to_user_id").text.toInt
+		}
 		favorited = (xml \ "favorited").text.toBoolean
 		in_reply_to_screen_name = (xml \ "in_reply_to_screen_name").text
 		user_id = (xml \ "user" \ "id").text.toInt
