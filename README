@@ -7,7 +7,8 @@ tweet.scala is just a basic tweet holding object factory
 dm.scala is the same for direct messages
 twitter.scala is a really crude ui to interact with the library
 
-scala_twitter can be compiled with fsc *.scala, and run with scala Twitter username password
+scala_twitter can be compiled with fsc *.scala, and run with scala Twitter
+scala_twitter has support for a config file with username and password, and generates one if there it is not found.
 
 UI options are:
 :f -> friends timeline

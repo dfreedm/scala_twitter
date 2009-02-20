@@ -27,7 +27,7 @@ class Tweet
 	{
 		created_at = (xml \ "created_at").text
 		msg_id = (xml \ "id").text.toInt
-		text = (xml \ "text").text.replaceAll("&lt;","<").replaceAll("&rt;",">")
+		text = (xml \ "text").text.replaceAll("&lt;","<").replaceAll("&gt;",">")
 		source = (xml \ "source").text
 		truncated = (xml \ "truncated").text.toBoolean
 		in_reply_to_status_id = (xml \ "in_reply_to_status_id").text match

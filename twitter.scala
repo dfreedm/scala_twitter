@@ -1,5 +1,5 @@
 import org.scala_twitter._
-import scala.util.matching.Regex
+import scala.xml._
 object Twitter
 {
 	var twitter:TwitterParser = null
@@ -9,36 +9,43 @@ object Twitter
 	{
 		try
 		{
-			username=args(0);
-			password=args(1);
+			var config = XML.loadFile(".scala_twitter.conf")
+			username = (config\"username").text
+			password = (config\"password").text
 			twitter = new TwitterParser(username,password);
-			ui()
+			ui
 		}
 		catch
 		{
-			case e:ArrayIndexOutOfBoundsException => { println("Need username and password") }
+			case e:java.io.FileNotFoundException => {genconf()}
+			case e:Exception => { e.printStackTrace }
 		}
 	}
 	def ui():Unit =
 	{
 		//Really simple ui, for the purposes of testing
-		print("Command: ")
-		var input = readLine()
-		println()
-		input = input.trim()
-		var control:String = input.slice(0,2)
-		control match
+		println("Commands:\nr - Replies\nf - Friends Timeline\nu - Update, rest of line is parsed as a status");
+		println("p - Public Timeline\nd - Direct Messages\nq - Quit\n");
+		var run = true;
+		while (run)
 		{
-			case ":u" => twitter.update(input.substring(2).trim())
-			case ":f" => display(twitter.getTimeline("friends"))
-			case ":p" => display(twitter.getTimeline("public"))
-			case ":d" => display(twitter.getDMs)
-			case ":r" => display(twitter.getReplies)
-			case ":q" => return
-			case _ => println("Not a command")
+			print("Command: ")
+			var input = readLine()
+			println()
+			input = input.trim()
+			var control:String = input.slice(0,1)
+			control match
+			{
+				case "u" => twitter.update(input.substring(1).trim())
+				case "f" => display(twitter.getTimeline("friends"))
+				case "p" => display(twitter.getTimeline("public"))
+				case "d" => display(twitter.getDMs)
+				case "r" => display(twitter.getReplies)
+				case "q" => run = false;
+				case _ => println("Not a command")
+			}
+			println()
 		}
-		println()
-		ui()
 	}
 	def pad(x:String):String = x + (" " * (15-x.length))
 	def display(tw:Array[Tweet]) =
@@ -52,5 +59,18 @@ object Twitter
 			}
 			println(pad(tweet.screen_name) + ": " + tweet.text.replaceAll("<3","\u2665") + scala.Console.RESET)
 		})
+	}
+	def genconf():Unit =
+	{
+		println("Config file not found");
+		print("Username: ")
+		var u:String = readLine
+		print("Password: ")
+		var p:String = readLine
+		println("Saving config")
+		var a:Elem = <scala_config><username>{u}</username><password>{p}</password></scala_config>
+		XML.save(".scala_twitter.conf",a,"UTF-8");
+		twitter = new TwitterParser(u,p)
+		ui
 	}
 }
