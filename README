@@ -10,10 +10,11 @@ twitter.scala is a really crude ui to interact with the library
 scala_twitter can be compiled with fsc *.scala, and run with scala Twitter
 scala_twitter has support for a config file with username and password, and generates one if there it is not found.
 
-UI options are:
-:f -> friends timeline
-:p -> public timeline
-:r -> @replies
-:d -> recieved direct messages
-:q -> quit
-:u -> update status
+UI options are
+f -> friends timeline
+p -> public timeline
+r -> @replies
+d -> recieved direct messages
+q -> quit
+u -> update status
+? -> print list of commands
