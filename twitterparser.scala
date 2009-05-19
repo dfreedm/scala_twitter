@@ -9,18 +9,15 @@ import scala.collection.jcl.ArrayList
 class TwitterParser(username:String,password:String){
 	private val http = "http://twitter.com/"
 	private val connect = new Auth(username,password);
-	private def getConnection(turl:String):URLConnection =
-	{
-		try
-		{
+	private def getConnection(turl:String):URLConnection = {
+		try {
 			//Fail fast on bad usernames, passwords, or urls
 			System.setProperty("http.maxRedirects","2");
 			Authenticator.setDefault(connect)
 			var url:URL = new URL(turl)
 			url.openConnection
 		}
-		catch
-		{
+		catch {
 			case e:ProtocolException => {println("username or password incorrect");null}
 			case e:MalformedURLException => {println("url was bad");null}
 			case e:Exception => {println(e.getMessage());null}
@@ -29,8 +26,7 @@ class TwitterParser(username:String,password:String){
 	/**
 	 * Pull line from twitter url xml feed and parse it
 	 */
-	private def get(turl:String):Array[Tweet] =
-	{
+	private def get(turl:String):Array[Tweet] = {
 		if (turl == null) return null;
 		var connection:URLConnection = getConnection(turl)
 		if (connection == null) return null;
@@ -38,8 +34,7 @@ class TwitterParser(username:String,password:String){
 		var reader:BufferedReader = new BufferedReader(new InputStreamReader(content));
 		val xml = XML.load(reader)
 		var tweets = new ArrayList[Tweet]
-		xml.label match
-		{
+		xml.label match {
 			case "statuses" => (xml \ "status").foreach(tweet => tweets.add(Tweet(tweet)))
 			case "direct-messages" => (xml \ "direct_message").foreach(dm => tweets.add(DM(dm)))
 			case _ => println(xml)
@@ -75,7 +70,7 @@ class TwitterParser(username:String,password:String){
 		var url:String = http+"statuses/"
 		if (timeline == "friends" || timeline == "public" || timeline == "user")
 		{
-			url+=timeline+"_timeline.xml"
+			url+=timeline+"_timeline.xml?count=40"
 		}
 		else
 		{

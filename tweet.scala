@@ -15,31 +15,22 @@ class Tweet
 	var user_id:Int = 0
 	var followers_count:Int = 0
 	var in_reply_to_screen_name:String = null
-	var in_reply_to_status_id:Int = 0
-	var in_reply_to_user_id:Int = 0
+	var in_reply_to_status_id:Option[Long] = None
+	var in_reply_to_user_id:Option[Long] = None
 	var truncated:Boolean = false
 	var favorited:Boolean = false
 	var created_at:String = null
 	var text:String = null
 	var source:String = null
-	var msg_id:Int = 0
-	def parse(xml:Node):Unit =
-	{
+	var msg_id:Long = 0
+	def parse(xml:Node):Unit = {
 		created_at = (xml \ "created_at").text
-		msg_id = (xml \ "id").text.toInt
+		msg_id = (xml \ "id").text.toLong
 		text = (xml \ "text").text.replaceAll("&lt;","<").replaceAll("&gt;",">")
 		source = (xml \ "source").text
 		truncated = (xml \ "truncated").text.toBoolean
-		in_reply_to_status_id = (xml \ "in_reply_to_status_id").text match
-		{
-			case "" => 0
-			case _ => (xml \ "in_reply_to_status_id").text.toInt
-		}
-		in_reply_to_user_id = (xml \ "in_reply_to_user_id").text match
-		{
-			case "" => 0
-			case _ => (xml \ "in_reply_to_user_id").text.toInt
-		}
+		in_reply_to_status_id = (xml \ "in_reply_to_status_id").text
+		in_reply_to_user_id = (xml \ "in_reply_to_user_id").text
 		favorited = (xml \ "favorited").text.toBoolean
 		in_reply_to_screen_name = (xml \ "in_reply_to_screen_name").text
 		user_id = (xml \ "user" \ "id").text.toInt
@@ -51,6 +42,12 @@ class Tweet
 		user_url = (xml \ "user" \ "url").text
 		user_protected = (xml \ "user" \ "protected").text.toBoolean
 		followers_count = (xml \ "user" \ "followers_count").text.toInt
+	}
+	implicit def optioner(x:String):Option[Long] = {
+		x match {
+			case "" => None
+			case _ => Some(x.toLong)
+		}
 	}
 }
 /**

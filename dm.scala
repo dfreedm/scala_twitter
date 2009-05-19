@@ -8,7 +8,7 @@ class DM extends Tweet
 	override def parse(xml:Node):Unit =
 	{
 		created_at = (xml \ "created_at").text
-		msg_id = (xml \ "id").text.toInt
+		msg_id = (xml \ "id").text.toLong
 		text = (xml \ "text").text
 		user_id = (xml \ "sender" \ "id").text.toInt
 		user_name = (xml \ "sender" \ "name").text
