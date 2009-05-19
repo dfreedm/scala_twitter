@@ -32,7 +32,7 @@ object Twitter
 			clear_screen;
 			control match{
 				case ":u" => twitter.update(input.substring(2).trim())
-				case ":f " => display(twitter.getTimeline("friends"))
+				case ":f" => display(twitter.getTimeline("friends"))
 				case ":p" => display(twitter.getTimeline("public"))
 				case ":d" => display(twitter.getDMs)
 				case ":r" => display(twitter.getReplies)
