@@ -1,5 +1,7 @@
 import org.scala_twitter._
 import scala.xml._
+import java.text.SimpleDateFormat
+
 object Twitter
 {
 	var twitter:TwitterParser = null
@@ -11,15 +13,15 @@ object Twitter
 			username = (config\"username").text
 			password = (config\"password").text
 			twitter = new TwitterParser(username,password);
-			ui
+			ui()
 		}
 		catch{
 			case e:java.io.FileNotFoundException => {genconf()}
 			case e:Exception => { e.printStackTrace }
 		}
 	}
+	//Really simple ui, for the purposes of testing
 	def ui():Unit = {
-		//Really simple ui, for the purposes of testing
 		val help = List("Commands:",":r - Replies",":f - Friends Timeline",":u - Update, rest of line is parsed as a status",":p - Public Timeline",":d - Direct Messages",":t - Follow this Person, rest of line is parsed as username to follow",":q - Quit",":? - This listing")
 		help.foreach{h => println(h)};
 		var run = true;
@@ -43,16 +45,26 @@ object Twitter
 			}
 		}
 	}
+	/* Pad the username with a buffer */
 	def pad(x:String):String = x + (" " * (15-x.length))
+	/* Format the twitter date to something more sane */
+	def formatDate(x :String):String = {
+		var incomingFormat = new SimpleDateFormat("EEE MMM d HH:mm:ss +0000 yyyy");
+		var outgoingFormat = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
+		var newDate = incomingFormat.parse(x);
+		var out = outgoingFormat.format(newDate);
+		return out;
+	}
 	def display(tw:Array[Tweet]) = {
 		tw.foreach(tweet => {
-			//Print @replies in red
+			//Print @replies in cyan
 			if (tweet.in_reply_to_screen_name == username) {
 				print(Console.CYAN)
 			}
-			println(pad(tweet.screen_name) + ": " + tweet.text.replaceAll("<3","\u2665") + Console.RESET)
+			println("<" + formatDate(tweet.created_at) + ">" + " " + tweet.screen_name + ": " + Console.RESET)
 		})
 	}
+	/* Create an XML config file */
 	def genconf():Unit = {
 		println("Config file not found");
 		print("Username: ")

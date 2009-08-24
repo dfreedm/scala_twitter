@@ -43,6 +43,7 @@ class Tweet
 		user_protected = (xml \ "user" \ "protected").text.toBoolean
 		followers_count = (xml \ "user" \ "followers_count").text.toInt
 	}
+	// Prevents null exceptions for all the ids
 	implicit def optioner(x:String):Option[Long] = {
 		x match {
 			case "" => None
@@ -55,8 +56,7 @@ class Tweet
  */
 object Tweet
 {
-	def apply(x:Node):Tweet =
-	{
+	def apply(x:Node):Tweet={
 		var i = new Tweet
 		i.parse(x)
 		return i
