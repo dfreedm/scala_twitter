@@ -61,7 +61,7 @@ object Twitter
 			if (tweet.in_reply_to_screen_name == username) {
 				print(Console.CYAN)
 			}
-			println("<" + formatDate(tweet.created_at) + ">" + " " + tweet.screen_name + ": " + Console.RESET)
+			println("<" + formatDate(tweet.created_at) + ">" + " " + tweet.screen_name + ": " + tweet.text + Console.RESET)
 		})
 	}
 	/* Create an XML config file */
